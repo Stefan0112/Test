@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f6f2e9">
+<title>美式自然拼读 · 成人速学</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f2e9;
+    --paper:#fffdf7;
+    --paper2:#fbf7ee;
+    --ink:#1f251e;
+    --ink-soft:#3d4638;
+    --muted:#757e6f;
+    --line:#e4ddcc;
+    --line2:#ece5d4;
+    --teal:#176455;
+    --teal-soft:#e2eeea;
+    --terra:#b4572e;
+    --terra-soft:#f4e4d8;
+    --ok:#2f7d4f;
+    --err:#bc3f2f;
+    --warn:#b1801a;
+    --shadow:0 1px 2px rgba(31,37,30,.05),0 10px 30px -18px rgba(31,37,30,.35);
+    --shine: rgba(255,255,255,.55);
+    --radius:18px;
+    --serif:'Lora','Noto Serif SC',Georgia,'Songti SC',serif;
+    --sans:'Noto Sans SC',-apple-system,'PingFang SC','Microsoft YaHei',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{font-size:16px}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(23,100,85,.06), transparent 60%),
+      radial-gradient(900px 500px at -10% 20%, rgba(180,87,46,.05), transparent 55%),
+      var(--bg);
+    background-attachment:fixed;
+    min-height:100vh;
+    padding-bottom:calc(96px + env(safe-area-inset-bottom));
+    line-height:1.6;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.06'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- top bar ---------- */
+  .topbar{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:blur(14px) saturate(1.3);
+    background:rgba(246,242,233,.82);
+    border-bottom:1px solid var(--line);
+    padding:calc(10px + env(safe-area-inset-top)) 18px 10px;
+  }
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand .mark{
+    width:38px;height:38px;border-radius:11px;flex:none;
+    background:linear-gradient(145deg,#1d705f,#0f4c42);
+    color:#ecf6f1;display:grid;place-items:center;
+    font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:.5px;
+    box-shadow:0 6px 14px -6px rgba(15,76,66,.6), inset 0 1px 0 var(--shine);
+  }
+  .brand h1{font-size:17px;font-weight:700;letter-spacing:.2px;line-height:1.25}
+  .brand p{font-size:11px;color:var(--muted);letter-spacing:.4px}
+  .brand .day{
+    margin-left:auto;text-align:right;font-size:11px;color:var(--muted);
+  }
+  .segment{
+    display:flex;gap:6px;margin-top:12px;padding:4px;
+    background:rgba(31,37,30,.06);border-radius:13px;
+  }
+  .segment button{
+    flex:1;padding:9px 0;font-size:14px;font-weight:500;color:var(--ink-soft);
+    border-radius:10px;position:relative;transition:.2s;
+  }
+  .segment button[aria-selected="true"]{
+    background:var(--paper);color:var(--teal);font-weight:700;
+    box-shadow:0 2px 8px -3px rgba(31,37,30,.25);
+  }
+  .segment button .sub{display:block;font-size:10px;font-weight:400;color:var(--muted)}
+  .segment button[aria-selected="true"] .sub{color:var(--teal)}
+
+  main{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:16px 16px 0}
+  .panel{display:none;animation:pop .34s cubic-bezier(.2,.8,.3,1)}
+  .panel.active{display:block}
+  @keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* ---------- section sub-tabs ---------- */
+  .subnav{
+    display:flex;gap:8px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none;
+  }
+  .subnav::-webkit-scrollbar{display:none}
+  .subnav button{
+    flex:none;padding:8px 14px;border-radius:999px;font-size:13px;font-weight:500;
+    color:var(--ink-soft);background:var(--paper);border:1px solid var(--line2);
+    transition:.18s;
+  }
+  .subnav button[aria-selected="true"]{
+    background:var(--teal);color:#eef7f2;border-color:transparent;
+    box-shadow:0 4px 12px -6px rgba(23,100,85,.6);
+  }
+  .page{display:none}
+  .page.active{display:block;animation:pop .32s ease}
+
+  .card{
+    background:var(--paper);border:1px solid var(--line2);
+    border-radius:var(--radius);box-shadow:var(--shadow);
+    padding:18px;margin-bottom:14px;
+  }
+  .lead{color:var(--ink-soft);font-size:14.5px}
+  .hint{font-size:12.5px;color:var(--muted);line-height:1.7}
+  .pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:500;padding:4px 10px;border-radius:999px}
+
+  /* chapter head */
+  .chap{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .chap .no{
+    font-family:var(--serif);font-size:30px;font-weight:600;color:var(--terra);
+    line-height:1;padding-top:4px;
+  }
+  .chap .c1{font-size:18px;font-weight:700;font-family:var(--serif)}
+  .chap .c2{font-size:12px;color:var(--muted);margin-top:2px}
+
+  /* concept blocks */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .vs .col{border-radius:16px;padding:16px;border:1px solid var(--line2)}
+  .vs .col.ka{padding-top:15px;background:var(--paper)}
+  .vs .col.ke{background:var(--teal);color:#e9f5ef;border-color:transparent}
+  .vs h3{font-size:13px;letter-spacing:.5px;margin-bottom:10px}
+  .vs .ke h3{color:#cfe9df}
+  .vs .big{font-family:var(--serif);font-size:40px;font-weight:600;line-height:1}
+  .vs .cap{font-size:12px;color:var(--muted);margin-top:6px}
+  .vs .ke .cap{color:#bcddd2}
+  .flow{
+    display:flex;align-items:center;gap:8px;overflow-x:auto;padding:6px 2px 2px;
+  }
+  .flow .node{
+    flex:none;min-width:88px;text-align:center;padding:12px 10px;border-radius:14px;
+    background:var(--paper2);border:1px solid var(--line2);font-size:12px;color:var(--ink-soft);
+  }
+  .flow .node b{display:block;font-size:14px;font-family:var(--serif);color:var(--ink)}
+  .flow .arrow{color:var(--terra);font-weight:700;flex:none}
+
+  .phoncard{
+    border:1px solid var(--line2);border-radius:16px;padding:16px;margin-bottom:12px;
+    background:var(--paper);overflow:hidden;
+  }
+  .phoncard .top{display:flex;align-items:center;gap:14px}
+  .phoncard .sym{
+    flex:none;width:74px;height:74px;border-radius:16px;display:grid;place-items:center;
+    background:var(--teal-soft);font-family:var(--serif);font-size:34px;font-weight:600;color:var(--teal);
+    border:1px solid #cfe2db;
+  }
+  .phoncard .t1{font-size:14px;font-weight:700}
+  .phoncard .mouth{font-size:13px;color:var(--ink-soft);margin-top:3px}
+  .phoncard .words{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .wchip{
+    display:flex;align-items:center;gap:8px;padding:8px 6px 8px 14px;border-radius:12px;
+    background:var(--paper2);border:1px solid var(--line2);font-size:14px;font-weight:600;
+    transition:.15s;
+  }
+  .wchip:active{transform:scale(.97)}
+  .wchip .t{font-size:12px;color:var(--muted);font-weight:400;font-family:var(--sans)}
+  .speak{
+    width:32px;height:32px;border-radius:10px;display:grid;place-items:center;
+    background:var(--teal);color:#eef7f2;transition:.15s;
+  }
+  .speak:active{transform:scale(.88)}
+  .speak.speakbig{width:38px;height:38px;border-radius:12px}
+
+  /* consonant groups */
+  .grp{background:var(--paper);border:1px solid var(--line2);border-radius:16px;padding:16px;margin-bottom:12px}
+  .grp .head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .grp .tag{font-size:12px;font-weight:700;padding:5px 11px;border-radius:999px;color:#fff}
+  .cons{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .citem{
+    display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:12px;
+    background:var(--paper2);border:1px solid var(--line2);font-size:13px;
+  }
+  .citem .ph{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--teal);min-width:30px}
+  .citem .ltr{font-family:var(--serif);font-size:17px;font-weight:700;color:var(--ink);min-width:16px}
+  .citem .ex{color:var(--muted);font-size:11.5px;margin-left:auto;text-align:right;line-height:1.2}
+
+  .ruleCard{
+    border:1px solid var(--terra);background:linear-gradient(135deg,var(--terra-soft),#f7ede3);
+    border-radius:16px;padding:16px;margin-top:14px;
+  }
+  .ruleCard h4{color:var(--terra);font-size:13px;letter-spacing:.4px;font-family:var(--serif)}
+  .ruleRow{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+  .cg{flex:1;min-width:130px;background:rgba(255,255,255,.6);border-radius:12px;padding:11px}
+  .cg .w{font-size:15px;font-weight:700;font-family:var(--serif)}
+  .cg .p{font-family:var(--serif);color:var(--muted);font-size:12px}
+
+  .tipbar{
+    display:flex;gap:9px;align-items:flex-start;padding:11px 13px;border-radius:13px;
+    background:#fdf6e6;border:1px solid #ecd9a8;color:#7a5d15;font-size:12.5px;margin-top:14px;
+  }
+
+  /* ---------- games ---------- */
+  .level{
+    background:var(--paper);border:1px solid var(--line2);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px;margin-bottom:14px;position:relative;overflow:hidden;
+  }
+  .level::after{content:none}
+  .level.locked::after{
+    content:"先完成上一关即可解锁";position:absolute;inset:0;z-index:2;display:grid;place-items:center;
+    background:rgba(246,242,233,.78);backdrop-filter:blur(3px);font-size:13px;color:var(--muted);
+  }
+  .level.done .ltag.off{display:none}
+  .ltag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.5px;padding:4px 10px;border-radius:999px}
+  .lnum{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--teal)}
+  .lname{font-size:16px;font-weight:700;font-family:var(--serif);margin-top:2px}
+  .ldesc{font-size:12.5px;color:var(--muted);margin-top:5px}
+  .level .cta{margin-top:14px;width:100%;padding:13px;border-radius:13px;font-size:15px;font-weight:700;color:#fff;background:var(--teal);transition:.15s}
+  .level .cta:active{transform:scale(.98)}
+  .level.done .cta{background:linear-gradient(145deg,#1d705f,#0f4c42)}
+  .badge{
+    position:absolute;top:16px;right:16px;font-size:11px;font-weight:700;color:var(--ok);
+    background:var(--teal-soft);padding:4px 9px;border-radius:999px;border:1px solid #cde2da;
+  }
+  .lockrow{display:flex;align-items:center;gap:8px;color:var(--muted)}
+
+  /* game screen overlay */
+  .overlay{
+    position:fixed;inset:0;z-index:60;background:rgba(31,37,30,.45);backdrop-filter:blur(4px);
+    display:none;align-items:flex-end;justify-content:center;
+  }
+  .overlay.open{display:flex}
+  .sheet{
+    width:100%;max-width:560px;background:var(--bg);border-radius:24px 24px 0 0;
+    padding:8px 18px calc(20px + env(safe-area-inset-bottom));
+    max-height:92vh;overflow-y:auto;animation:slideUp .34s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes slideUp{from{transform:translateY(60px);opacity:.4}to{transform:none;opacity:1}}
+  .sheet .grip{width:44px;height:5px;border-radius:99px;background:var(--line);margin:6px auto 6px}
+  .sheethead{display:flex;align-items:center;justify-content:space-between;padding:6px 0 4px}
+  .sheethead .cap{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:.5px}
+  .close{width:34px;height:34px;border-radius:11px;font-size:18px;color:var(--muted);background:var(--paper);border:1px solid var(--line2)}
+
+  .qbar{display:flex;align-items:center;gap:12px;margin:10px 0 4px}
+  .qbar .step{font-size:12px;color:var(--muted);white-space:nowrap}
+  .qbar .trk{flex:1;height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+  .qbar .fill{height:100%;background:var(--teal);border-radius:99px;transition:.3s}
+  .scorepill{font-size:12px;font-weight:700;color:var(--terra)}
+
+  .qhead{margin:14px 0 2px}
+  .qprompt{font-size:15px;font-weight:700;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .bigphon{
+    font-family:var(--serif);font-size:52px;font-weight:700;color:var(--teal);
+    line-height:1.05;text-align:center;background:var(--paper);border:1px solid var(--line2);
+    border-radius:18px;padding:16px 0;box-shadow:var(--shadow);
+  }
+  .opts{display:grid;gap:10px;margin-top:16px}
+  .opt{
+    display:flex;align-items:center;gap:12px;width:100%;text-align:left;
+    padding:15px 16px;border-radius:15px;background:var(--paper);border:1.5px solid var(--line2);
+    font-size:16px;font-weight:600;transition:.15s;
+  }
+  .opt:active{transform:scale(.985)}
+  .opt .idx{flex:none;width:26px;height:26px;border-radius:8px;background:var(--paper2);border:1px solid var(--line2);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted)}
+  .opt .phon{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink)}
+  .opt.disable{pointer-events:none}
+  .opt.ok{border-color:var(--ok);background:#e8f3ec}
+  .opt.ok .idx{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .opt.ok .phon{color:var(--ok)}
+  .opt.err{border-color:var(--err);background:#fbeae8}
+  .opt.err .idx{background:var(--err);color:#fff;border-color:var(--err)}
+  .opt.err .phon{color:var(--err)}
+  .opt .check{flex:none;margin-left:auto;font-size:18px}
+
+  .feedback{
+    margin-top:14px;border-radius:14px;padding:13px 15px;font-size:13.5px;animation:pop .25s ease;
+  }
+  .feedback.ok{background:var(--teal-soft);border:1px solid #cde2da;color:#123f34}
+  .feedback.err{background:#fbedea;border:1px solid #ecd0c7;color:#7c2b20}
+  .feedback b{font-size:14px}
+  .feedback .ex{font-family:var(--serif);color:var(--teal);font-weight:600}
+  .nextBtn{margin-top:14px;width:100%;padding:14px;border-radius:14px;font-size:15px;font-weight:700;color:#fff;background:var(--teal)}
+  .nextBtn.retry{background:var(--terra)}
+
+  /* report */
+  .reportNote{font-size:12.5px;color:var(--muted);text-align:center;margin-top:10px}
+  .statGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  .stat{background:var(--paper);border:1px solid var(--line2);border-radius:14px;padding:13px;text-align:center}
+  .stat .v{font-family:var(--serif);font-size:26px;font-weight:600}
+  .stat .l{font-size:11px;color:var(--muted);margin-top:2px}
+  .weak{margin-top:14px;background:var(--paper);border:1px solid var(--line2);border-radius:14px;padding:13px}
+  .weak h5{font-size:13px;font-family:var(--serif);margin-bottom:8px}
+  .weak .none{font-size:13px;color:var(--ok);font-weight:600}
+  .wk{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line2);font-size:13px}
+  .wk:last-child{border-bottom:none}
+  .wk .ph{font-family:var(--serif);font-weight:600;color:var(--terra);min-width:44px}
+  .wk .bar{flex:1;height:7px;background:var(--line);border-radius:99px;overflow:hidden}
+  .wk .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--terra),#d87a46);border-radius:99px}
+
+  .trophy{
+    text-align:center;padding:34px 0 10px;animation:pop .45s cubic-bezier(.2,.8,.3,1);
+  }
+  .trophy .cup{font-size:64px;filter:drop-shadow(0 10px 18px rgba(180,87,46,.4));animation:bob 1.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .trophy h2{font-family:var(--serif);font-size:24px;color:var(--ink);margin-top:12px}
+  .trophy p{color:var(--muted);font-size:13px;margin-top:6px}
+  .sheetreveal{border-radius:16px;border:1px solid #e7cfae;background:linear-gradient(135deg,#fbf0df,#f6e6c9);padding:13px;margin-top:16px;font-size:13px}
+  .sheetreveal b{color:var(--terra)}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="mark">Ph</div>
+    <div>
+      <h1>美式自然拼读</h1>
+      <p>成人速学 · 零基础自学</p>
+    </div>
+    <div class="day">
+      <div>今日进度</div>
+      <div style="font-weight:700;color:var(--teal);font-family:var(--serif)">Day <span id="dayChip">1</span></div>
+    </div>
+  </div>
+  <div class="segment" id="mainSeg" role="tablist">
+    <button role="tab" aria-selected="true" data-seg="learn">学习资料
+      <span class="sub">看·听·说</span></button>
+    <button role="tab" aria-selected="false" data-seg="game">闯关复习
+      <span class="sub">测·考·练</span></button>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ================= 学习资料 ================= -->
+  <section class="panel active" id="panel-learn" aria-label="学习资料">
+    <nav class="subnav" id="learnNav">
+      <button data-pg="p1" aria-selected="true">① 元音科普</button>
+      <button data-pg="p2">② 短元音</button>
+      <button data-pg="p3">③ 长元音</button>
+      <button data-pg="p4">④ 辅音</button>
+    </nav>
+
+    <!-- 第1页：元音字母科普 -->
+    <div class="page active" id="p1">
+      <div class="card">
+        <div class="lead">先分清：<b>元音字母</b>是靠<em>书写</em>认出来的，<b>元音音标</b>是靠<em>嘴巴</em>发出来的。它们是两回事——同一个字母，能发不同的声音。</div>
+      </div>
+
+      <div class="vs" style="margin-bottom:14px">
+        <div class="col ka">
+          <h3>📝 元音字母 · 书写</h3>
+          <div class="big" style="letter-spacing:6px">A E I O U</div>
+          <div class="cap">只有这 5 个字母叫“元音字母”，是拼单词的“骨架”。</div>
+        </div>
+        <div class="col ke">
+          <h3>👄 元音音标 · 声音</h3>
+          <div class="big" style="letter-spacing:2px">/æ e ɪ ɑː/</div>
+          <div class="cap">同一个字母 A，在不同单词里要“换张嘴”——一个字母能发很多种音。</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="c1" style="font-weight:700;font-family:var(--serif);font-size:15px;margin-bottom:4px">为什么字母和读音对不上？</div>
+        <p class="hint" style="color:var(--ink-soft)">英语是“借来”的字，一个字母 A 在某些单词里发短音 /æ/（cat），另一些发长音 /eɪ/（name）。所以认单词不能只“背字母拼写”，要看<b style="color:var(--teal)">它落在哪、旁边是谁</b>。</p>
+        <div class="flow" style="margin-top:14px">
+          <div class="node"><b>A</b>字母 A</div>
+          <span class="arrow">→</span>
+          <div class="node"><b>/æ/</b>cat 短元音</div>
+          <span class="arrow">→</span>
+          <div class="node"><b>/eɪ/</b>name 长元音</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="c1" style="font-weight:700;font-family:var(--serif);font-size:15px;margin-bottom:6px">学习路线（听音为主）</div>
+        <div class="flow">
+          <div class="node"><b>26 字母</b>已会</div>
+          <span class="arrow">→</span>
+          <div class="node" style="border-color:var(--teal)"><b>短元音</b>先学</div>
+          <span class="arrow">→</span>
+          <div class="node"><b>长元音</b>再学</div>
+          <span class="arrow">→</span>
+          <div class="node"><b>辅音</b>最后</div>
+        </div>
+        <div class="tipbar">💡 每天 15–20 分钟，一组就够了。先“耳朵”记住音，再去拼读，别着急。</div>
+      </div>
+    </div>
+
+    <!-- 第2页：短元音 -->
+    <div class="page" id="p2">
+      <div class="chap"><div class="no">Ⅱ</div><div><div class="c1">短元音 · 短促有力</div><div class="c2">声音短、干脆，不拖长。点击音标/单词可听美式发音</div></div></div>
+      <!-- 短元音卡片渲染 -->
+    </div>
+
+    <!-- 第3页：长元音 -->
+    <div class="page" id="p3">
+      <div class="chap"><div class="no">Ⅲ</div><div><div class="c1">长元音 · 字母本名</div><div class="c2">长元音其实就是在“读字母自己的名字”，发音要拖长</div></div></div>
+      <!-- 长元音卡片渲染 -->
+    </div>
+
+    <!-- 第4页：辅音 -->
+    <div class="page" id="p4">
+      <div class="chap"><div class="no">Ⅳ</div><div><div class="c1">辅音 · 分类掌握</div><div class="c2">按“怎么发出来的”分三类，重点记下 C、G 的两套发音</div></div></div>
+      <!-- 辅音渲染 -->
+    </div>
+  </section>
+
+  <!-- ================= 闯关复习 ================= -->
+  <section class="panel" id="panel-game" aria-label="闯关复习">
+    <div class="card" style="padding:16px 18px">
+      <div class="lead" style="font-size:14px">三关<b style="color:var(--teal)">顺序解锁</b>，必须过关才能进下一关。会覆盖你学过的全部内容，做错的题会<b>反复练到对</b>。</div>
+    </div>
+    <div id="gameList"></div>
+  </section>
+</main>
+
+<!-- 游戏浮层 -->
+<div class="overlay" id="overlay">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<script>
+/* =====================================================================
+   数据层：美式自然拼读（KK 近似标注，全部美式发音）
+   ===================================================================== */
+const PHONEMES = [
+  // 短元音
+  {id:'æ', group:'short', ltr:'A', disp:'æ', letter:'a',
+   mouth:'嘴巴张大，舌尖轻抵下齿，像“啊”但更短促',
+   words:[{w:'cat',p:'kæt'},{w:'map',p:'mæp'},{w:'hat',p:'hæt'}]},
+  {id:'e', group:'short', ltr:'E', disp:'e', letter:'e',
+   mouth:'嘴巴半开，嘴角向两边微咧，下巴略松',
+   words:[{w:'bed',p:'bed'},{w:'red',p:'red'},{w:'pen',p:'pen'}]},
+  {id:'ɪ', group:'short', ltr:'I', disp:'ɪ', letter:'i',
+   mouth:'嘴巴放松微张，声音短而轻，别咧嘴笑',
+   words:[{w:'sit',p:'sɪt'},{w:'hit',p:'hɪt'},{w:'big',p:'bɪg'}]},
+  {id:'ɑ', group:'short', ltr:'O', disp:'ɑ', letter:'o',
+   mouth:'嘴巴张大呈圆形，声音靠喉后部，短促',
+   words:[{w:'hot',p:'hɑt'},{w:'top',p:'tɑp'},{w:'dog',p:'dɑg'}]},
+  {id:'ʌ', group:'short', ltr:'U', disp:'ʌ', letter:'u',
+   mouth:'嘴巴半开、下巴放松，短促有力，很“憨”',
+   words:[{w:'cup',p:'kʌp'},{w:'bus',p:'bʌs'},{w:'sun',p:'sʌn'}]},
+
+  // 长元音（读字母本名）
+  {id:'eɪ', group:'long', ltr:'A', disp:'eɪ', letter:'a',
+   mouth:'从半开滑向扁平，像大声读字母 A，声音拖长',
+   words:[{w:'name',p:'neɪm'},{w:'cake',p:'keɪk'},{w:'gate',p:'geɪt'}],
+   note:'规则：词尾 +e（silent e），元音读长音'},
+  {id:'iː', group:'long', ltr:'E', disp:'iː', letter:'e',
+   mouth:'嘴角向两边拉开展露牙齿，像说字母 E，拖长',
+   words:[{w:'me',p:'miː'},{w:'bee',p:'biː'},{w:'see',p:'siː'}],
+   note:'规则：ee/ea 或词尾 e，读长音'},
+  {id:'aɪ', group:'long', ltr:'I', disp:'aɪ', letter:'i',
+   mouth:'嘴巴从张大滑向扁平，像说字母 I “唉”，拖长',
+   words:[{w:'like',p:'laɪk'},{w:'kite',p:'kaɪt'},{w:'time',p:'taɪm'}],
+   note:'规则：i + 辅音 + e，读本名'},
+  {id:'oʊ', group:'long', ltr:'O', disp:'oʊ', letter:'o',
+   mouth:'嘴巴撮圆后再放松，像说字母 O“欧”，拖长',
+   words:[{w:'home',p:'hoʊm'},{w:'nose',p:'noʊz'},{w:'go',p:'goʊ'}],
+   note:'规则：o + 辅音 + e 或词尾开音节，读本名'},
+  {id:'juː', group:'long', ltr:'U', disp:'juː', letter:'u',
+   mouth:'先发轻微的“y”再拉长到 uː，像说字母 U“优”',
+   words:[{w:'use',p:'juːz'},{w:'cube',p:'kjuːb'},{w:'cute',p:'kjuːt'}],
+   note:'规则：u + 辅音 + e，读本名'},
+
+  // 辅音
+  // 爆破音
+  {id:'p', group:'cons', cls:'爆破音', ltr:'p', disp:'p',
+   mouth:'双唇闭上憋气，猛一冲开发出，气流短促', words:[{w:'pen',p:'pen'},{w:'cup',p:'kʌp'}]},
+  {id:'b', group:'cons', cls:'爆破音', ltr:'b', disp:'b',
+   mouth:'同 P，但声带振动，声音浑浊、短促', words:[{w:'bed',p:'bed'},{w:'bus',p:'bʌs'}]},
+  {id:'t', group:'cons', cls:'爆破音', ltr:'t', disp:'t',
+   mouth:'舌尖顶牙龈，猛地一放，气流冲出', words:[{w:'two',p:'tu'},{w:'top',p:'tɑp'}]},
+  {id:'d', group:'cons', cls:'爆破音', ltr:'d', disp:'d',
+   mouth:'同 T，但声带振动，声音浑浊', words:[{w:'dog',p:'dɑg'},{w:'bed',p:'bed'}]},
+  {id:'k', group:'cons', cls:'爆破音', ltr:'k', disp:'k',
+   mouth:'舌根抵住软腭憋气，猛地放开，清音', words:[{w:'kite',p:'kaɪt'},{w:'cup',p:'kʌp'}]},
+  {id:'g', group:'cons', cls:'爆破音', ltr:'g', disp:'g',
+   mouth:'同 K，但声带振动，声音浑浊', words:[{w:'go',p:'goʊ'},{w:'gate',p:'geɪt'}]},
+  // 摩擦音
+  {id:'f', group:'cons', cls:'摩擦音', ltr:'f', disp:'f',
+   mouth:'上齿轻咬下唇，气流摩擦发出，清音', words:[{w:'fan',p:'fæn'},{w:'foot',p:'fʊt'}]},
+  {id:'v', group:'cons', cls:'摩擦音', ltr:'v', disp:'v',
+   mouth:'同 F，但声带振动', words:[{w:'van',p:'væn'},{w:'vet',p:'vet'}]},
+  {id:'s', group:'cons', cls:'摩擦音', ltr:'s', disp:'s',
+   mouth:'舌尖靠近上牙龈，气流从齿缝挤过，清音（蛇声）', words:[{w:'sun',p:'sʌn'},{w:'sit',p:'sɪt'}]},
+  {id:'z', group:'cons', cls:'摩擦音', ltr:'z', disp:'z',
+   mouth:'同 S，但声带振动（蜜蜂嗡嗡声）', words:[{w:'zip',p:'zɪp'},{w:'zoo',p:'zu'}]},
+  {id:'ʃ', group:'cons', cls:'摩擦音', ltr:'sh', disp:'ʃ',
+   mouth:'嘴唇微噘拢圆，让气流摩擦（安静“嘘”）', words:[{w:'ship',p:'ʃɪp'},{w:'shut',p:'ʃʌt'}]},
+  {id:'h', group:'cons', cls:'摩擦音', ltr:'h', disp:'h',
+   mouth:'喉咙轻呼气，像哈气，清音', words:[{w:'hat',p:'hæt'},{w:'hot',p:'hɑt'}]},
+  // 鼻音
+  {id:'m', group:'cons', cls:'鼻音', ltr:'m', disp:'m',
+   mouth:'双唇闭合，气从鼻子里出来', words:[{w:'map',p:'mæp'},{w:'me',p:'miː'}]},
+  {id:'n', group:'cons', cls:'鼻音', ltr:'n', disp:'n',
+   mouth:'舌尖顶牙龈，气从鼻子里出来', words:[{w:'nose',p:'noʊz'},{w:'name',p:'neɪm'}]},
+  {id:'ŋ', group:'cons', cls:'鼻音', ltr:'ng', disp:'ŋ',
+   mouth:'嘴半张、舌根抬起，气从鼻子里出来', words:[{w:'sing',p:'sɪŋ'},{w:'thing',p:'θɪŋ'}]},
+];
+
+// 拼读字典：辅音id + 元音id -> 单词（用于第三关综合拼读）
+const BLENDS = {
+  'k_æ':'cat','b_æ':'bat','m_æ':'map','h_æ':'hat',
+  'b_e':'bed','p_e':'pen','r_e':'red',
+  's_ɪ':'sit','h_ɪ':'hit','b_ɪ':'big',
+  'h_ɑ':'hot','t_ɑ':'top','d_ɑ':'dog',
+  'k_ʌ':'cup','b_ʌ':'bus','s_ʌ':'sun',
+  'n_eɪ':'name','k_eɪ':'cake','g_eɪ':'gate',
+  'm_iː':'me','b_iː':'bee',
+  'k_aɪ':'kite','l_aɪ':'like','t_aɪ':'time',
+  'h_oʊ':'home','n_oʊ':'nose','g_oʊ':'go',
+  'j_juː':'use','k_juː':'cube',
+};
+
+// 全部词库（扁平），用于音标选词 / 拼读多选
+function wordBank(){
+  const list=[];
+  for(const ph of PHONEMES){
+    for(const w of ph.words){
+      for(const bl in BLENDS){ if(BLENDS[bl]===w.w){ list.push({w:w.w,p:w.p,phon:ph.id,phonDisp:ph.disp}); break; } }
+      if(!list.some(x=>x.w===w.w)) list.push({w:w.w,p:w.p,phon:ph.id,phonDisp:ph.disp});
+    }
+  }
+  return list;
+}
+const BANK = wordBank();
+const VOWELS = [PHONEMES[0],PHONEMES[1],PHONEMES[2],PHONEMES[3],PHONEMES[4],PHONEMES[5],PHONEMES[6],PHONEMES[7],PHONEMES[8],PHONEMES[9]];
+
+/* =====================================================================
+   语音
+   ===================================================================== */
+let voicesReady=false;
+function initVoices(){ const v=speechSynthesis.getVoices(); voicesReady = v.some(x=>/^en/i.test(x.lang)); }
+if ('speechSynthesis' in window){ initVoices(); speechSynthesis.onvoiceschanged=initVoices; }
+function speak(text){
+  if(!('speechSynthesis' in window)) return;
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-US'; u.rate=0.82; u.pitch=1;
+  const vs=speechSynthesis.getVoices();
+  const v=vs.find(x=>/en[-_]US/i.test(x.lang))
+      || vs.find(x=>/en/i.test(x.lang) && /google|natural|samantha/i.test(x.name))
+      || vs.find(x=>/^en/i.test(x.lang));
+  if(v) u.voice=v;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+
+/* =====================================================================
+   渲染 · 学习资料
+   ===================================================================== */
+function speakIcon(extra){ return '<button class="speak" aria-label="播放">'+extra+'</button>'; }
+
+function renderShortVowels(){
+  const box=document.querySelector('#p2');
+  box.innerHTML = VOWELS.slice(0,5).map(ph=>`
+    <div class="phoncard">
+      <div class="top">
+        <button class="sym" data-speak="${ph.id}" title="播读音标对应的短元音">
+           /${ph.disp}/
+        </button>
+        <div>
+          <div class="t1">字母 ${ph.ltr.toUpperCase()} · 短元音</div>
+          <div class="mouth">${ph.mouth}</div>
+        </div>
+      </div>
+      <div class="words">
+        ${ph.words.map(w=>`
+          <button class="wchip" data-speak="${w.w}">
+            <span>${w.w}</span>
+            <span class="t">/${w.p}/</span>
+            <span class="speak">${svgSpk()}</span>
+          </button>`).join('')}
+      </div>
+    </div>`).join('');
+  addSpeakHandlers(box);
+}
+
+function renderLongVowels(){
+  const box=document.querySelector('#p3');
+  box.innerHTML = VOWELS.slice(5).map(ph=>`
+    <div class="phoncard">
+      <div class="top">
+        <button class="sym" data-speak="${ph.words.length?ph.words[0].w:ph.id}" title="播放长元音示范">
+          /${ph.disp}/
+        </button>
+        <div>
+          <div class="t1">字母 ${ph.ltr.toUpperCase()} 的本名 · 长元音</div>
+          <div class="mouth">${ph.mouth}</div>
+          <div class="hint" style="margin-top:6px">${ph.note||''}</div>
+        </div>
+      </div>
+      <div class="words">
+        ${ph.words.map(w=>`
+          <button class="wchip" data-speak="${w.w}">
+            <span>${w.w}</span><span class="t">/${w.p}/</span><span class="speak">${svgSpk()}</span>
+          </button>`).join('')}
+      </div>
+    </div>`).join('');
+  addSpeakHandlers(box);
+}
+
+function renderConsonants(){
+  const box=document.querySelector('#p4');
+  const order=['爆破音','摩擦音','鼻音'];
+  const clsColor={
+    爆破音:['#176455','#e2eeea'],
+    摩擦音:['#3c6bb4','#e3ebf8'],
+    鼻音:['#9a6a1a','#f6ecd6'],
+  };
+  const groupHtml=order.map(cls=>{
+    const items=PHONEMES.filter(ph=>ph.cls===cls);
+    const [c1,c2]=clsColor[cls];
+    return `<div class="grp">
+      <div class="head"><span class="tag" style="background:${c1}">${cls}</span>
+        <span class="hint">${clsDesc(cls)}</span></div>
+      <div class="cons">
+        ${items.map(ph=>`
+          <button class="citem" data-speak="${ph.words[0].w}" data-word="${ph.words[0].w}">
+            <span class="ph">/${ph.disp}/</span>
+            <span class="ltr">${ph.ltr}</span>
+            <span class="ex">${ph.words[0].w}<br>/${ph.words[0].p}/</span>
+            <span class="speak">${svgSpk()}</span>
+          </button>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  box.innerHTML = groupHtml + `
+    <div class="ruleCard">
+      <h4>⚠️ 重点：C 与 G 的两套发音</h4>
+      <div class="ruleRow">
+        <div class="cg"><b style="color:#b0491f" class="w">C = /k/ 或 /s/</b>
+          <div class="p">a/o/u 前读 <b>/k/</b>：<button class="wchip" data-speak="cat" style="padding:3px 10px;font-size:13px">${svgSpk()} cat</button> <button class="wchip" data-speak="cup" style="padding:3px 10px;font-size:13px">${svgSpk()} cup</button></div>
+          <div class="p" style="margin-top:6px">e/i/y 前读 <b>/s/</b>：<button class="wchip" data-speak="city" style="padding:3px 10px;font-size:13px">${svgSpk()} city</button> <button class="wchip" data-speak="face" style="padding:3px 10px;font-size:13px">${svgSpk()} face</button></div>
+        </div>
+        <div class="cg"><b style="color:#b0491f" class="w">G = /g/ 或 /dʒ/</b>
+          <div class="p">a/o/u 前读 <b>/g/</b>：<button class="wchip" data-speak="go" style="padding:3px 10px;font-size:13px">${svgSpk()} go</button> <button class="wchip" data-speak="gate" style="padding:3px 10px;font-size:13px">${svgSpk()} gate</button></div>
+          <div class="p" style="margin-top:6px">e/i/y 前读 <b>/dʒ/</b>：<button class="wchip" data-speak="gem" style="padding:3px 10px;font-size:13px">${svgSpk()} gem</button> <button class="wchip" data-speak="orange" style="padding:3px 10px;font-size:13px">${svgSpk()} orange</button></div>
+        </div>
+      </div>
+    </div>`;
+  addSpeakHandlers(box);
+}
+function clsDesc(cls){ return {爆破音:'“堵住-放开”，气流啪地冲出',摩擦音:'气流摩擦，像“嘶/嘘”',鼻音:'气从鼻子里出来'}[cls]; }
+
+function svgSpk(){
+  return `<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>`;
+}
+
+function addSpeakHandlers(root){
+  root.querySelectorAll('[data-speak]').forEach(el=>{
+    el.addEventListener('click',e=>{ e.stopPropagation(); speak(el.getAttribute('data-speak')); });
+  });
+}
+
+/* =====================================================================
+   闯关数据与进度
+   ===================================================================== */
+const KEY='american-phonics-v1';
+function load(){ try{return JSON.parse(localStorage.getItem(KEY))||{done:[]}}catch(e){return{done:[]}} }
+function save(s){ localStorage.setItem(KEY,JSON.stringify(s)); }
+let state = load();
+function isUnlocked(i){ // level index 0-based
+  if(i===0) return true;
+  return state.done.includes(i-1);
+}
+
+/* =====================================================================
+   题目生成
+   ===================================================================== */
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sample(a,n){ return shuffle(a).slice(0,n); }
+
+// 模式1：听音选音标（3选项）
+function genLevel1(ph){
+  const opts=shuffle([ph,...sample(PHONEMES.filter(x=>x.id!==ph.id),2)]);
+  return {
+    type:1, play: ph.words[0].w, phon:ph, phonId:ph.id, correctLabel: ph.disp,
+    exWord:ph.words[0].w,
+    options: opts.map(o=>({label:o.disp, phon:o.id}))
+  };
+}
+// 模式2：看音标选单词（4选项）
+function genLevel2(ph){
+  const correct=BANK.filter(x=>x.phon===ph.id);
+  const cw=shuffle(correct)[0];
+  const dist=BANK.filter(x=>x.phon!==ph.id);
+  const opts=shuffle([cw,...sample(dist,3)]);
+  return {
+    type:2, phon:ph, phonId:ph.id, exWord:cw.w, correctWord:cw.w,
+    options: opts.map(o=>o.w)
+  };
+}
+// 模式3：辅音+元音 -> 拼出单词（4选项）
+function genLevel3(conPh,vowPh){
+  const target=BLENDS[conPh.id+'_'+vowPh.id]; if(!target) return null;
+  const optWords=shuffle([target,...sample(BANK.map(x=>x.w).filter(w=>w!==target),3)]);
+  return { type:3,
+    conDisp:conPh.disp, conCk:conPh.words[0].w,
+    vowDisp:vowPh.disp, vowCk:vowPh.words[0].w,
+    phonId:vowPh.id, exWord:target, correctWord:target, options:optWords };
+}
+
+/* =====================================================================
+   游戏引擎
+   ===================================================================== */
+let run=null;
+
+function buildQueue(mode){
+  if(mode===1){
+    return shuffle(PHONEMES.map(ph=>genLevel1(ph)));
+  } else if(mode===2){
+    return shuffle(PHONEMES.map(ph=>genLevel2(ph)));
+  }
+  const qs=[];
+  const cons=PHONEMES.filter(p=>p.group==='cons');
+  for(const c of cons){ for(const vn of VOWELS){ if(BLENDS[c.id+'_'+vn.id]) qs.push(genLevel3(c,vn)); } }
+  return shuffle(qs);
+}
+
+function startLevel(mode){
+  const qs=buildQueue(mode);
+  run={ mode, queue:qs, wrong:[], correct:0, total:0, answered:0, perPhon:{}, lock:false,
+        levelDone:false, wrongOnce:0, respawned:false };
+  openSheet(questionHTML(qs[0]));
+}
+
+// 记录每个音标的对/错，用于薄弱分析
+function record(phonId, isRight){
+  if(!phonId) return;
+  run.perPhon[phonId]=run.perPhon[phonId]||{r:0,w:0};
+  isRight?run.perPhon[phonId].r++:run.perPhon[phonId].w++;
+}
+
+function questionHTML(q){
+  const all=run.queue.length + run.wrong.length;
+  const done=run.total;
+  const pct=Math.min(100, all?Math.round(done/all*100):0);
+  let body='';
+  if(q.type===1){
+    setTimeout(()=>speak(q.play),280);
+    body=`
+      <div class="qhead"><div class="qprompt">🎧 听发音，选出你听到的元音音标
+        <button class="speak speakbig" onclick="speak('${q.play}')">${svgSpk()}</button></div></div>
+      <div class="opts">${q.options.map((o,i)=>optBtn(i,'phon',o.label)).join('')}</div>`;
+  } else if(q.type===2){
+    body=`
+      <div class="qhead" style="text-align:center"><div class="qprompt" style="justify-content:center">📖 看音标 · 选出对应的单词</div></div>
+      <div class="bigphon" style="margin-top:12px">/${q.phon.disp}/</div>
+      <div style="text-align:center;margin-top:10px"><button class="speak speakbig" onclick="speak('${q.phon.words[0].w}')">${svgSpk()}</button></div>
+      <div class="opts">${q.options.map((o,i)=>optBtn(i,'word',o)).join('')}</div>`;
+  } else {
+    body=`
+      <div class="qhead"><div class="qprompt" style="justify-content:center;font-size:14px">🧩 辅音 [${q.conDisp}] ＋ 元音 [${q.vowDisp}] → 拼出哪个单词？</div></div>
+      <div style="display:flex;justify-content:center;gap:12px;margin-top:12px">
+        <button class="sym" style="width:88px;height:92px;font-size:38px" onclick="speak('${q.conCk}')">${q.conDisp}<br><span style="font-size:12px;font-family:var(--sans);color:var(--muted)">辅音·点击听</span></button>
+        <span style="align-self:center;font-size:24px;color:var(--terra);font-weight:700">＋</span>
+        <button class="sym" style="width:88px;height:92px;font-size:38px" onclick="speak('${q.vowCk}')">${q.vowDisp}<br><span style="font-size:12px;font-family:var(--sans);color:var(--muted)">元音·点击听</span></button>
+      </div>
+      <div style="text-align:center;margin-top:8px"><button class="speak speakbig" onclick="speak('${q.correctWord}')" title="播放合成结果">${svgSpk()}</button></div>
+      <div class="opts">${q.options.map((o,i)=>optBtn(i,'word',o)).join('')}</div>`;
+  }
+  return `
+    <div class="qbar">
+      <span class="step" style="color:var(--ink-soft)">第 ${done+1} / ${all} 题</span>
+      <span class="trk"><span class="fill" style="width:${pct}%"></span></span>
+      <span class="scorepill">✦ ${run.correct} 对</span>
+      <button class="close" onclick="closeSheet()" style="flex:none">×</button>
+    </div>
+    ${body}
+    <div class="reportNote" style="margin-top:10px">答错不扣分，会被<b style="color:var(--terra)">单独拎出来反复练</b>直到答对</div>`;
+}
+function optBtn(i,kind,label){
+  const filled=['A','B','C','D'][i];
+  return `<button class="opt" data-i="${i}">
+    <span class="idx">${filled}</span><span class="${kind==='phon'?'phon':'wordOpt'}">${label}</span><span class="check"></span></button>`;
+}
+
+function answerIsCorrect(q,opt){
+  if(q.type===1) return opt.phon===q.phon.id;
+  return opt===q.correctWord;
+}
+
+function bindAnswer(sheet){
+  sheet.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      if(run.lock) return; run.lock=true;
+      sheet.querySelectorAll('.opt').forEach(b=>b.classList.add('disable'));
+      const q=run.queue[0];
+      const chosen=q.options[+btn.getAttribute('data-i')];
+      const correct=answerIsCorrect(q,chosen);
+      record(q.phonId, correct);
+      run.total++; run.answered++;
+      if(correct){
+        run.correct++; btn.classList.add('ok'); btn.querySelector('.check').textContent='✓';
+      } else {
+        btn.classList.add('err'); btn.querySelector('.check').textContent='✗';
+        run.wrongOnce++; run.wrong.push(q);
+      }
+      sheet.querySelectorAll('.opt').forEach(b=>{
+        if( answerIsCorrect(q,q.options[+b.getAttribute('data-i')]) ){ b.classList.add('ok'); b.querySelector('.check').textContent='✓'; }
+      });
+      showFeedback(q, correct);
+    });
+  });
+}
+
+function showFeedback(q, correct){
+  const sheet=document.getElementById('sheet');
+  let feedback;
+  if(correct){
+    feedback = q.type===2
+      ? `✅ <b>答对了！</b> /${q.phon.disp}/ 正是 <span class="ex">${q.correctWord}</span> 里的元音。`
+      : q.type===1
+        ? `✅ <b>答对了！</b> 你听到的是 <span class="ex">/${q.phon.disp}/</span>，如 <span class="ex">${q.exWord}</span>。`
+        : `✅ <b>拼对了！</b> [${q.vowDisp}] 组合出的正是 <span class="ex">${q.correctWord}</span>。`;
+    feedback=`<div class="feedback ok">${feedback}</div>`;
+  } else {
+    let correctAns = q.type===1 ? `/${q.phon.disp}/（如 ${q.exWord}）` : `<span class="ex">${q.correctWord}</span>`;
+    feedback=`<div class="feedback err">❌ <b>正确答案是</b> ${correctAns}<br><span style="opacity:.8">已记下这题，接下来会<b style="color:inherit">专门再练一次</b>到答对为止。</span></div>`;
+  }
+  const next=`<button class="nextBtn ${correct?'':'retry'}" onclick="advance()">${correct?'下一题 →':'记住了，再来一次 →'}</button>`;
+  sheet.insertAdjacentHTML('beforeend', feedback + next);
+}
+
+function advance(){
+  run.lock=false;
+  run.queue.shift(); // 移走已答的题（错题已进入 run.wrong）
+  if(run.queue.length===0){
+    if(run.wrong.length){ run.queue=shuffle(run.wrong); run.wrong=[]; run.respawned=true; }
+    else return finishLevel();
+  }
+  const sheet=document.getElementById('sheet');
+  sheet.innerHTML=questionHTML(run.queue[0]);
+  bindAnswer(sheet);
+}
+
+/* ---------- 通关报告 + 奖励 ---------- */
+function markLevelDone(mode){
+  if(!state.done.includes(mode-1)){ state.done.push(mode-1); save(state); }
+}
+
+function finishLevel(){
+  run.levelDone=true;
+  markLevelDone(run.mode);
+  const total=run.total, correct=run.correct;
+  const acc=total?Math.round(correct/total*100):100;
+  const weak=Object.entries(run.perPhon)
+    .map(([id,v])=>({ph:PHONEMES.find(p=>p.id===id),wrong:v.w}))
+    .filter(x=>x.ph && x.wrong>0).sort((a,b)=>b.wrong-a.wrong).slice(0,6);
+  const sheet=document.getElementById('sheet');
+  const medal=acc>=90?'🥇':acc>=70?'🥈':'🥉';
+  const isLast = run.mode===3;
+  const allCleared = isLast && state.done.length>=3;
+
+  let reveal='';
+  if(run.respawned) reveal=`<div class="sheetreveal">🔁 你曾出错 <b>${run.wrongOnce}</b> 次，这些薄弱点都已逐题练到答对。</div>`;
+
+  const body=`
+    <div class="qbar"><span class="step" style="color:var(--ink-soft)">本关总结 · 关卡 ${run.mode}</span><span class="trk"></span>
+      <span class="scorepill">${medal}</span>
+      <button class="close" onclick="closeSheet()">×</button></div>
+    <div style="text-align:center;margin-top:16px"><span style="font-size:54px">${run.mode===3?'🏁':'🎯'}</span></div>
+    <div class="qhead"><div class="qprompt" style="justify-content:center;font-family:var(--serif)">关卡 ${run.mode} · 闯关报告</div></div>
+    <div class="statGrid">
+      <div class="stat"><div class="v" style="color:var(--teal)">${acc}%</div><div class="l">正确率</div></div>
+      <div class="stat"><div class="v">${correct}</div><div class="l">答对 ${total} 题</div></div>
+    </div>
+    ${reveal}
+    <div class="weak"><h5>📌 掌握薄弱（待加强）</h5>
+      ${weak.length? weak.map(w=>`<div class="wk"><span class="ph">/${w.ph.disp}/</span>
+          <span class="bar"><i style="width:${Math.min(100,w.wrong*20)}%"></i></span>
+          <span class="hint">错 ${w.wrong} 次</span></div>`).join('')
+        :`<div class="none">没有明显短板——练得很扎实 👍</div>`}
+      ${weak.length?`<p class="hint" style="margin-top:8px">回到「学习资料」把上面这些音标再听几遍，然后回来重打。</p>`:''}
+    </div>`;
+
+  let reward='';
+  if(allCleared){
+    reward=`
+      <div class="trophy"><div class="cup">🏆</div>
+        <h2>全部通关，你是拼读高手！</h2>
+        <p>短元音·长元音·辅音·拼读，你已全部掌握，正式告别“零基础”。</p>
+        <div class="sheetreveal" style="margin-top:14px">🎉 通关奖励：<b>美式拼读入门成就达成</b> —— 接下来可挑战多音节单词与阅读小短文。</div>
+      </div>`;
+  } else if(!isLast){
+    reward=`<div class="sheetreveal" style="margin-top:4px">🔓 已解锁 <b>关卡 ${run.mode+1}</b>，返回关卡列表继续闯关吧。</div>`;
+  }
+
+  sheet.innerHTML=`
+    ${reward}
+    ${body}
+    <button class="nextBtn" onclick="closeSheet()" style="margin-top:16px;background:var(--ink)">返回关卡列表</button>`;
+}
+
+/* =====================================================================
+   覆盖层
+   ===================================================================== */
+function openSheet(html){
+  const sheet=document.getElementById('sheet');
+  sheet.innerHTML=html;
+  run.lock=false;
+  document.getElementById('overlay').classList.add('open');
+  requestAnimationFrame(()=>bindAnswer(sheet));
+}
+function closeSheet(){ document.getElementById('overlay').classList.remove('open'); if(run&&!run.levelDone){ /* nothing */ } renderGameList(); document.dispatchEvent(new Event('render-game')); }
+function closeOverlayFromBtn(){ closeSheet(); }
+document.getElementById('overlay').addEventListener('click',e=>{ if(e.target.id==='overlay') closeSheet(); });
+
+/* =====================================================================
+   关卡列表
+   ===================================================================== */
+const LEVELS=[
+  {name:'听音选音标', mode:1, icon:'🎧', sub:'播放发音 → 从3个音标中选出你听到的', cover:'短元音 + 长元音 + 辅音，全部听辨'},
+  {name:'看音标选单词', mode:2, icon:'📖', sub:'显示音标 → 选出含有它的单词', cover:'训练“音形对应”，看到就会读'},
+  {name:'综合拼读闯关', mode:3, icon:'🧩', sub:'辅音 + 元音 → 拼出正确单词', cover:'检验能不能真正“拼”出来'},
+];
+function renderGameList(){
+  const box=document.getElementById('gameList');
+  box.innerHTML = LEVELS.map((l,i)=>{
+    const unlocked=isUnlocked(i);
+    const done=state.done.includes(i);
+    return `
+    <div class="level ${done?'done':''} ${unlocked?'open':'locked'}">
+      <div class="ltag" style="background:${unlocked?'var(--teal-soft)':'var(--paper2)'};color:${unlocked?'var(--teal)':'var(--muted)'}">
+        ${unlocked?(done?'已完成':'待挑战'):'🔒 未解锁'}
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:12px">
+        <span style="font-size:30px">${l.icon}</span>
+        <div>
+          <div class="lname">关卡 ${i+1} · ${l.name}</div>
+          <div class="ldesc">${l.sub}</div>
+        </div>
+      </div>
+      <div class="ldesc" style="margin-top:8px;padding:9px 12px;background:var(--paper2);border-radius:11px;border:1px dashed var(--line)">
+        📚 覆盖范围：${l.cover}
+      </div>
+      <button class="cta" ${unlocked?'':'disabled style=opacity:.4;background:var(--muted);cursor:not-allowed'} onclick="startLevel(${l.mode})">
+        ${done?'↻ 重新挑战':'开始闯关  →'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+/* =====================================================================
+   分区切换 / 导航
+   ===================================================================== */
+const seg=document.getElementById('mainSeg');
+seg.addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  seg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected', x===b));
+  const target=b.dataset.seg;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+target));
+});
+
+document.getElementById('learnNav').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('#learnNav button').forEach(x=>x.setAttribute('aria-selected', x===b));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active', p.id===b.dataset.pg));
+});
+
+// 初始化
+renderShortVowels();
+renderLongVowels();
+renderConsonants();
+renderGameList();
+</script>
+</body>
+</html>
