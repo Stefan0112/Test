@@ -533,20 +533,70 @@ const VOWELS = [PHONEMES[0],PHONEMES[1],PHONEMES[2],PHONEMES[3],PHONEMES[4],PHON
 
 /* =====================================================================
    语音
+   - 优先：浏览器系统语音（Web Speech API，真实 Chrome/Edge 音质最佳）
+   - 降级：环境无语音引擎时，自动改用在线美音发音（Google TTS mp3）
    ===================================================================== */
-let voicesReady=false;
-function initVoices(){ const v=speechSynthesis.getVoices(); voicesReady = v.some(x=>/^en/i.test(x.lang)); }
-if ('speechSynthesis' in window){ initVoices(); speechSynthesis.onvoiceschanged=initVoices; }
+let synthVoices=0;
+function refreshVoices(){
+  if(!('speechSynthesis' in window)){ synthVoices=0; return; }
+  try{ synthVoices=speechSynthesis.getVoices().length; }catch(e){ synthVoices=0; }
+}
+refreshVoices();
+if('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged=function(){ refreshVoices(); };
+}
+
+let audioEl=null;
+const AUDIO_WORDS=new Set(["cat","map","hat","bat","bed","red","pen","sit","hit","big","hot","top","dog","cup","bus","sun","name","cake","gate","me","bee","see","like","kite","time","home","nose","go","use","cube","cute","two","foot","van","vet","zoo","zip","ship","shut","sing","thing","city","face","gem","orange"]);
+
+function playOffline(text){
+  const t=text.trim().toLowerCase();
+  if(!/^[a-z]+$/.test(t) || !AUDIO_WORDS.has(t)) return false;
+  try{
+    if(!audioEl) audioEl=new Audio();
+    audioEl.src='audio/'+t+'.wav';
+    audioEl.play().catch(function(){});
+    return true;
+  }catch(e){ return false; }
+}
+function speakRemote(text){
+  try{
+    if(!audioEl) audioEl=new Audio();
+    audioEl.src='https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q='+encodeURIComponent(text);
+    audioEl.play().catch(function(){ speechTip(); });
+  }catch(e){ speechTip(); }
+}
 function speak(text){
-  if(!('speechSynthesis' in window)) return;
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang='en-US'; u.rate=0.82; u.pitch=1;
-  const vs=speechSynthesis.getVoices();
-  const v=vs.find(x=>/en[-_]US/i.test(x.lang))
-      || vs.find(x=>/en/i.test(x.lang) && /google|natural|samantha/i.test(x.name))
-      || vs.find(x=>/^en/i.test(x.lang));
-  if(v) u.voice=v;
-  speechSynthesis.cancel(); speechSynthesis.speak(u);
+  if(!text || !text.trim()) return;
+  refreshVoices();
+  // 1) 真实浏览器优先用本机自然语音（音质最好）
+  if(synthVoices>0){
+    const u=new SpeechSynthesisUtterance(text);
+    u.lang='en-US'; u.rate=0.82; u.pitch=1;
+    const vs=speechSynthesis.getVoices();
+    const v=vs.find(function(x){return /en[-_]US/i.test(x.lang);})
+        || vs.find(function(x){return /en/i.test(x.lang) && /google|natural|samantha/i.test(x.name);})
+        || vs.find(function(x){return /^en/i.test(x.lang);});
+    if(v) u.voice=v;
+    speechSynthesis.cancel();
+    try{ if(speechSynthesis.resume) speechSynthesis.resume(); }catch(e){}
+    speechSynthesis.speak(u);
+    return;
+  }
+  // 2) 无声卡/预览环境：用内置离线美音音频（保证能出声）
+  if(playOffline(text)) return;
+  // 3) 兜底：在线发音
+  speakRemote(text);
+}
+/* 首次切换在线发音时提示一次 */
+let tipShown=false;
+function speechTip(){
+  if(tipShown) return; tipShown=true;
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:140px;z-index:99;max-width:88%;background:#24332a;color:#f4f1e8;font-size:12.5px;padding:10px 14px;border-radius:12px;box-shadow:0 8px 24px -8px rgba(0,0,0,.4);animation:pop .3s ease';
+  d.textContent='无法调起本机语音引擎，已自动切换为在线发音。若仍无声，请在浏览器里打开本页，或检查系统音量。';
+  document.body.appendChild(d);
+  setTimeout(function(){ d.style.transition='opacity .4s'; d.style.opacity='0'; setTimeout(function(){d.remove();},400); }, 4200);
 }
 
 /* =====================================================================
